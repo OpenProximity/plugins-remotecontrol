@@ -1,0 +1,9 @@
+Remote control plugin, this plugin allows customers to ask for support and get
+someone to take control of they're computer through firewalls without the need
+to modify any setting on they're routers. The plugin gives an easy to use GUI
+so using the RemoteControlClient service becomes easier.
+
+It has been copied from 
+http://code.google.com/p/proximitymarketing/source/checkout
+
+Development will be kept in here from now on
