@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.utils.translation import ugettext as _
 from django.utils import simplejson
+from django.template import RequestContext
 
 import subprocess, os, signal, time, sys
 
@@ -74,21 +75,26 @@ def start_and_connect(host, redirects):
 
     args = list(gen_args_list(host, redirects))
     p=os.fork()
+    print p
     if p != 0:
+	print "first parent"
 	time.sleep(2)
-	os.wait() # wait for child to end
+	print os.wait()
     else:
 	os.chdir('/')
 	os.setsid()
 	os.umask(0)
-
+	
 	p = os.fork()
+	print p
 	if p != 0:
+	    print "second parent"
 	    b=open(PID_FILE, 'w')
 	    b.write(str(p))
 	    b.close()
 	    sys.exit(0)
 	else:
+	    print "child"
 	    os.execvp('remotecontrolclient', args)
 
 def stop():
@@ -140,11 +146,10 @@ def index(request):
     log = ''
     if os.path.isfile(LOG_FILE):
 	log = open(LOG_FILE).read()
-    return render_to_response(
-	'remotesupport/index.html',
-	{
-	    'running': isRunning(),
-	    'host_form': host_form,
-	    'redirect_form': redirect_form,
-	}
+    return render_to_response('remotesupport/index.html',
+        {
+            'running': isRunning(),
+            'host_form': host_form,
+            'redirect_form': redirect_form,
+        }, context_instance = RequestContext(request)
     )
